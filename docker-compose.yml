@@ -11,11 +11,6 @@ services:
       - "5005:5005"
     networks:
       - sensors-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
   warehouse-service:
     build:
