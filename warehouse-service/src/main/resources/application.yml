@@ -1,0 +1,11 @@
+server:
+  port: 8081
+
+warehouse:
+  name: warehouse-1
+  central-service-url: http://central-service:8080
+
+udp:
+  name: warehouse-1
+  temperature-port: 3344
+  humidity-port: 3355

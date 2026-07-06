@@ -1,0 +1,9 @@
+FROM python:3.11-alpine
+
+WORKDIR /app
+
+COPY temperature-sensor.sh .
+
+RUN chmod +x temperature-sensor.sh
+
+CMD ["./temperature-sensor.sh"]

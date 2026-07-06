@@ -1,0 +1,6 @@
+server:
+  port: 8080
+
+threshold:
+  temperature: 35.0
+  humidity: 50.0

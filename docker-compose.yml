@@ -1,0 +1,71 @@
+services:
+  central-service:
+    build:
+      context: ./central-service
+      dockerfile: Dockerfile
+      args:
+        VERSION: ${VERSION:-1.0.0}
+    container_name: central-service
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    networks:
+      - sensors-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  warehouse-service:
+    build:
+      context: ./warehouse-service
+      dockerfile: Dockerfile
+      args:
+        VERSION: ${VERSION:-1.0.0}
+    container_name: warehouse-service
+    ports:
+      - "8081:8081"
+      - "5006:5005"
+      - "3344:3344/udp"
+      - "3355:3355/udp"
+    environment:
+      - warehouse.central-service-url=http://central-service:8080
+    depends_on:
+      - central-service
+    networks:
+      - sensors-network
+
+  temperature-sensor:
+    build:
+      context: ./sensor-simulators
+      dockerfile: Dockerfile.temperature
+    container_name: temperature-sensor
+    environment:
+      - SENSOR_ID=t1
+      - HOST=warehouse-service
+      - PORT=3344
+      - INTERVAL=5
+    depends_on:
+      - warehouse-service
+    networks:
+      - sensors-network
+
+  humidity-sensor:
+    build:
+      context: ./sensor-simulators
+      dockerfile: Dockerfile.humidity
+    container_name: humidity-sensor
+    environment:
+      - SENSOR_ID=h1
+      - HOST=warehouse-service
+      - PORT=3355
+      - INTERVAL=5
+    depends_on:
+      - warehouse-service
+    networks:
+      - sensors-network
+
+networks:
+  sensors-network:
+    driver: bridge

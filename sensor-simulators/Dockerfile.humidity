@@ -1,0 +1,9 @@
+FROM python:3.11-alpine
+
+WORKDIR /app
+
+COPY humidity-sensor.sh .
+
+RUN chmod +x humidity-sensor.sh
+
+CMD ["./humidity-sensor.sh"]
